@@ -1,0 +1,14 @@
+{
+    "config": {
+        "abort": {
+            "single_instance_allowed": "Kun én konfiguration af weatherflow er tilladt."
+        },
+        "step": {
+            "confirm": {
+                "description": "Ønsker du at tilføje weatherflow integrationen?",
+                "title": "Weatherflow"
+            }
+        },
+        "title": "Weatherflow"
+    }
+}
