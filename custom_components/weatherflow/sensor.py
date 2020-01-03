@@ -11,7 +11,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP, SPEED_MS, CONF_UNIT_SYSTEM_IMPERIAL, ILLUMINANCE, DEVICE_CLASS_ILLUMINANCE, UNIT_UV_INDEX, PRESSURE_MBAR, DEVICE_CLASS_PRESSURE, TEMP_CELSIUS, DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_SIGNAL_STRENGTH, PRESSURE_INHG
 
-
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass: HomeAssistant, config_entry, async_add_entities):
@@ -30,6 +29,7 @@ class WFSensor(Entity):
         self._store = store
         self.controller = controller
         self.hass: HomeAssistant = hass
+        self.entity_id = self._get_entity_id(self.controller.sn, self._name)
 
     async def async_added_to_hass(self):
         self._store.entities.append(self)
@@ -51,7 +51,7 @@ class WFSensor(Entity):
 
     @property
     def unique_id(self):
-        return self.controller.sn + "_" + self._field
+        return f"{self.controller.sn}_{self._field}"
         
     @property
     def device_state_attributes(self):
@@ -88,6 +88,20 @@ class WFSensor(Entity):
     @property
     def state(self):
         return self.get_state()
+    
+    def _get_entity_id(self, serial, name):
+        """Construct the entity_id."""
+        _LOGGER.warning(serial)
+        if (serial[:2].lower() == "ar"):
+            devtype = 'air'
+        elif (serial[:2].lower() == 'sk'):
+            devtype = 'sky'
+        else:
+            devtype = 'hub'
+        
+        serno = serial[-4:]
+        
+        return f"sensor.{devtype}{serno}_{name}"
 
 class WindSensor(WFSensor):
     
@@ -631,4 +645,4 @@ class WFListener(threading.Thread):
         s.close()
 
     def stop(self):
-        self._stopped = True        
+        self._stopped = True     
