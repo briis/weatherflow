@@ -8,6 +8,7 @@
   "homekit": {},
   "dependencies": [],
   "codeowners": [
-    "@echo1001"
+    "@echo1001",
+    "@briis"
   ]
 }
